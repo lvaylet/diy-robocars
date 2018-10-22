@@ -1,14 +1,7 @@
 version: '2'
 services:
   frontend:
-    build: ./frontend
-    expose:
-      - "80"
-  proxy:
-    build: ./haproxy
-    depends_on:
-      - frontend
-      - data
+    build: ./frontend-vuejs
     ports:
       - "80:80"
   data:
