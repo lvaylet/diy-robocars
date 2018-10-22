@@ -1,10 +1,35 @@
 version: '2'
+
 services:
+
   frontend:
     build: ./frontend-vuejs
-    ports:
-      - "80:80"
+    expose:
+      - '80'
+
   data:
     build: ./data
     expose:
-      - "8080"
+      - '8080'
+
+  reverse-proxy:
+    build: ./reverse-proxy
+    ports:
+      # Enable 'Public Device URL' at the device level to generate
+      # a web accessible url and reach this reverse proxy responsible
+      # for serving the other services defined and expose here.
+      - '80:80'  # HOST:CONTAINER
+    depends_on:
+      - node-exporter
+
+  node-exporter:
+    image: rycus86/prometheus-node-exporter:0.15.2-armhf
+    expose:
+      - '9100'
+    command:
+      # Disable some collectors to save up on bandwidth usage
+      # The default collectors send 100 KB of data
+      # Reference: https://github.com/prometheus/node_exporter
+      - '--no-collector.diskstats'  # saves 9 KB => 91 KB payload
+      - '--no-collector.netstat'    # saves 45 KB => 46 KB payload
+      - '--no-collector.vmstat'     # saves 14 KB => 32 KB payload

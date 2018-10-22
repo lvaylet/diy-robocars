@@ -1,0 +1,3 @@
+location /metrics {
+    proxy_pass         http://docker-node-exporter/metrics;
+}

@@ -1,0 +1,3 @@
+upstream docker-node-exporter {
+    server node-exporter:9100;
+}
