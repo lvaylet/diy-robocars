@@ -1,0 +1,3 @@
+upstream docker-app {
+    server frontend:80;
+}
