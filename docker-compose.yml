@@ -15,9 +15,7 @@ services:
   reverse-proxy:
     build: ./reverse-proxy
     ports:
-      # Enable 'Public Device URL' at the device level to generate
-      # a web accessible url and reach this reverse proxy responsible
-      # for serving the other services defined and expose here.
+      # Enable web forwarding and map our reverse proxy to port 80
       - '80:80'  # HOST:CONTAINER
     depends_on:
       - node-exporter
@@ -33,3 +31,9 @@ services:
       - '--no-collector.diskstats'  # saves 9 KB => 91 KB payload
       - '--no-collector.netstat'    # saves 45 KB => 46 KB payload
       - '--no-collector.vmstat'     # saves 14 KB => 32 KB payload
+
+  timelapse:
+    build: ./timelapse
+    privileged: true  # allow direct access to hardware resources
+    labels:
+      io.resin.features.kernel-modules: '1'	# bind mounts the host OS /lib/modules into the container. (i.e. /lib/modules:/lib/modules)
