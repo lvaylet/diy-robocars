@@ -5,7 +5,7 @@ echo "Probing camera module..."
 # Reference: https://docs.resin.io/learn/develop/hardware/i2c-and-spi/#raspberry-pi-camera-module
 modprobe bcm2835-v4l2
 
-if [[ -z "${DEBUG}" ]]; then
+if [[ -n "${DEBUG}" ]]; then
   echo "Entering infinite loop..."
   while true; do sleep 1; done
 else

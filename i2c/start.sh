@@ -7,7 +7,7 @@ modprobe i2c-dev
 echo "Scanning I2C bus for devices..."
 i2cdetect -y 1
 
-if [[ -z "${DEBUG}" ]]; then
+if [[ -n "${DEBUG}" ]]; then
   echo "Entering infinite loop..."
   while true; do sleep 1; done
 else
