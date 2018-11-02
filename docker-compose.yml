@@ -34,6 +34,27 @@ services:
 
   timelapse:
     build: ./timelapse
-    privileged: true  # allow direct access to hardware resources
+    # Allow direct access to hardware resources
+    privileged: true
     labels:
-      io.resin.features.kernel-modules: '1'	# bind mounts the host OS /lib/modules into the container. (i.e. /lib/modules:/lib/modules)
+      # Bind mount the host OS /lib/modules into the container
+      # (i.e. /lib/modules:/lib/modules)
+      io.resin.features.kernel-modules: '1'
+
+  i2c:
+    build: ./i2c
+    # Unlike single container applications, multicontainer applications
+    # do not run containers in privileged mode by default. If you want
+    # to make use of hardware, you will either have to set some services
+    # to privileged, using `privileged: true`, or use the `cap_add` and
+    # `devices` settings to map in the correct hardware access to the
+    # container.
+    devices:
+      - '/dev/i2c-1:/dev/i2c-1'
+      - '/dev/mem:/dev/mem'
+    cap_add:
+      - SYS_RAWIO
+    labels:
+      # Bind mount the host OS /lib/modules into the container
+      # (i.e. /lib/modules:/lib/modules)
+      io.resin.features.kernel-modules: '1'
