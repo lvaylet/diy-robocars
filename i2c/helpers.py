@@ -6,6 +6,32 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def map_to_range(x: int, from_low: int, from_high: int, to_low: int, to_high: int) -> int:
+    """
+    Re-map a number from one range to another.
+
+    A value of fromLow would get mapped to toLow, a value of fromHigh to toHigh, values in-between to values in-between.
+
+    Do not constrain values to within the range, because out-of-range values are sometimes intended and useful.
+
+    Inspired by https://www.arduino.cc/reference/en/language/functions/math/map/
+
+    :param x: The number to map
+    :param from_low: The lower bound of the value’s current range
+    :param from_high: The upper bound of the value’s current range
+    :param to_low: The lower bound of the value’s target range
+    :param to_high: The upper bound of the value’s target range
+    :return: The re-mapped value
+    :type x: int
+    :type from_low: int
+    :type from_high: int
+    :type to_low: int
+    :type to_high: int
+    :rtype: int
+    """
+    return int((x - from_low) * (to_high - to_low) / (from_high - from_low) + to_low)
+
+
 def pulse_width_microseconds_to_ticks(desired_pulse_width_microseconds: int, pwm_freq_hz: int = 50) -> int:
     """
     Convert a PWM pulse width from microseconds to 12-bit ticks (0..4095).
@@ -19,16 +45,14 @@ def pulse_width_microseconds_to_ticks(desired_pulse_width_microseconds: int, pwm
     Reference: https://cdn-learn.adafruit.com/downloads/pdf/adafruit-16-channel-servo-driver-with-raspberry-pi.pdf
 
     :param desired_pulse_width_microseconds: The pulse width to convert, in microseconds
-    :type desired_pulse_width_microseconds: int
     :param pwm_freq_hz: The PWM frequency
-    :type pwm_freq_hz: int
     :return: The pulse width in ticks with 12-bit resolution (0..4095)
+    :type desired_pulse_width_microseconds: int
+    :type pwm_freq_hz: int
     :rtype: int
     """
     microseconds_per_second = 1_000_000
     microseconds_per_period = microseconds_per_second // pwm_freq_hz
-    logger.debug('There are %d microseconds per period at %d Hz', microseconds_per_period, pwm_freq_hz)
-    microseconds_per_tick = microseconds_per_period / 4096  # 12-bit resolution spans 2^12 = 4096 ticks
-    logger.debug('One tick represents %.2f microseconds', microseconds_per_tick)
-    pulse_width_ticks = int(desired_pulse_width_microseconds // microseconds_per_tick)
+    # Now map the desired pulse width (in microseconds) to ticks (0..4095 due to the 12-bit resolution)
+    pulse_width_ticks = map_to_range(desired_pulse_width_microseconds, 0, microseconds_per_period, 0, 4095)
     return pulse_width_ticks
