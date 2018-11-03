@@ -1,1 +1,2 @@
 adafruit-pca9685==1.0.1
+pytest==3.9.3
