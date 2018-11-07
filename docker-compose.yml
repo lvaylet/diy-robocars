@@ -58,3 +58,7 @@ services:
       # Bind mount the host OS /lib/modules into the container
       # (i.e. /lib/modules:/lib/modules)
       io.resin.features.kernel-modules: '1'
+
+  uart:
+    build: ./uart
+    privileged: true
