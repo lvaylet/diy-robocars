@@ -1,10 +1,10 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-node:7-slim
+FROM resin/%%RESIN_MACHINE_NAME%%-node:9-slim
 
 # Defines our working directory in container
 WORKDIR /usr/src/app
 
-# Copies the package.json first for better cache on later pushes
-COPY package.json package.json
+# Copies the package*.json first for better cache on later pushes
+COPY package.json package-lock.json ./
 
 # This install npm dependencies on the resin.io build server,
 # making sure to clean up the artifacts it creates in order to reduce the image size.
