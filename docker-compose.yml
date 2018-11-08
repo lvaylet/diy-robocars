@@ -3,7 +3,7 @@ version: '2'
 services:
 
   frontend:
-    build: ./frontend-vuejs
+    build: ./frontend
     expose:
       - '80'
 
