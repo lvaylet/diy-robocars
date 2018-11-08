@@ -1,4 +1,4 @@
-FROM resin/raspberrypi3-node:9
+FROM arm32v7/node:10-slim
 
 ENV INITSYSTEM on
 
