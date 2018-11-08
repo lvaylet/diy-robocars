@@ -8,10 +8,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
-
+COPY package.json package-lock.json ./
 RUN JOBS=MAX npm install --production
 
-COPY . .
+COPY . ./
 
 CMD [ "bash", "start.sh" ]
