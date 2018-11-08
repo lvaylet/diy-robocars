@@ -60,5 +60,5 @@ services:
       io.resin.features.kernel-modules: '1'
 
   uart:
-    build: ./uart
+    build: ./uart-python
     privileged: true
