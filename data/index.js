@@ -22,11 +22,15 @@ const sendThrottleValue = (socket) => {
 
 io.on('connection', function(socket) {
   'use strict';
+
   console.log('a user connected');
+
+  // Send steering and throttle values every second
   let dataLoop = setInterval(function() {
     sendSteeringValue(socket);
     sendThrottleValue(socket);
   }, 1000);
+
 	socket.on('disconnect', function() {
       console.log('a user disconnected');
 			clearInterval(dataLoop);
