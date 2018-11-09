@@ -7,10 +7,10 @@ define(["jquery", "highcharts", "socketio"], function($, Highcharts, io) {
         renderTo: "container"
       },
       title: {
-        text: "CPU Load Average & Memory Usage"
+        text: "Steering & Throttle"
       },
       subtitle: {
-        text: "Plotting CPU Load and Memory Info in real-time using websockets."
+        text: "Plotting the pulse widths from the RF receiver in real-time using websockets."
       },
       xAxis: {
         gridLineWidth: 5,
@@ -19,32 +19,32 @@ define(["jquery", "highcharts", "socketio"], function($, Highcharts, io) {
       yAxis: [
         {
           title: {
-            text: "Memory %age"
+            text: "Steering"
           },
-          min: 0,
-          max: 100,
+          min: 1000,
+          max: 2000,
           plotLines: [
             {
               value: 0,
               width: 1,
               colour: "#808800"
             }
-          ],
-          opposite: true
+          ]
         },
         {
           title: {
-            text: "LoadAvg"
+            text: "Throttle"
           },
-          min: 0,
+          min: 1000,
+          max: 2000,
           plotLines: [
             {
               value: 0,
               width: 1,
               colour: "#008888",
-              zIndex: 0
             }
-          ]
+          ],
+          opposite: true
         }
       ],
       plotOptions: {
@@ -55,15 +55,14 @@ define(["jquery", "highcharts", "socketio"], function($, Highcharts, io) {
       },
       series: [
         {
-          name: "MemInfo",
-          type: "column",
+          name: "Steering",
+          type: "spline",
           color: "#008800",
-          grouping: false,
           yAxis: 0,
           data: []
         },
         {
-          name: "CpuLoad",
+          name: "Throttle",
           type: "spline",
           yAxis: 1,
           data: []
@@ -75,13 +74,13 @@ define(["jquery", "highcharts", "socketio"], function($, Highcharts, io) {
       window.location.protocol + "//" + window.location.hostname
     );
 
-    socket.on("loadavg", data => {
-      var series = chart.series[1];
-      series.addPoint([data.onemin], true, series.data.length > 100);
-    });
-    socket.on("memory", data => {
+    socket.on("steering", data => {
       var series = chart.series[0];
-      series.addPoint([data.used], true, series.data.length > 100);
+      series.addPoint([data.pulse_width_microseconds], true, series.data.length > 100);
+    });
+    socket.on("throttle", data => {
+      var series = chart.series[1];
+      series.addPoint([data.pulse_width_microseconds], true, series.data.length > 100);
     });
   });
 });
