@@ -1,0 +1,3 @@
+upstream docker-frontend {
+    server frontend:80;
+}

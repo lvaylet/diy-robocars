@@ -18,6 +18,7 @@ services:
       # Enable web forwarding and map our reverse proxy to port 80
       - '80:80'  # HOST:CONTAINER
     depends_on:
+      - frontend
       - node-exporter
 
   node-exporter:
