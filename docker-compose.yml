@@ -12,13 +12,14 @@ services:
     expose:
       - '8080'
 
-  reverse-proxy:
-    build: ./reverse-proxy
+  proxy:
+    build: ./haproxy
     ports:
       # Enable web forwarding and map our reverse proxy to port 80
       - '80:80'  # HOST:CONTAINER
     depends_on:
       - frontend
+      - data
       - node-exporter
 
   node-exporter:
