@@ -14,9 +14,10 @@ services:
 
   proxy:
     build: ./haproxy
-    ports:
-      # Enable web forwarding and map our reverse proxy to port 80
-      - '80:80'  # HOST:CONTAINER
+    # Reallocate port 80 to reverse-proxy (below)
+    # ports:
+    #   # Enable web forwarding and map our reverse proxy to port 80
+    #   - '80:80'  # HOST:CONTAINER
     depends_on:
       - frontend
       - data
@@ -64,3 +65,21 @@ services:
   uart:
     build: ./uart-python
     privileged: true
+
+  rabbitmq:
+    image: arm32v7/rabbitmq:3.7-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: 'rabbitmq'
+      RABBITMQ_DEFAULT_PASS: 'rabbitmq'
+      RABBITMQ_ERLANG_COOKIE: 'SWQOKODSQALRPCLNMEQG'
+      RABBITMQ_DEFAULT_VHOST: '/'
+    expose:
+      - '15672'  # management UI
+      - '5672'   # default listening port
+  
+  reverse-proxy:
+    build: ./reverse-proxy
+    ports:
+      # Enable web forwarding and map our reverse proxy to port 80
+      - '80:80'  # HOST:CONTAINER

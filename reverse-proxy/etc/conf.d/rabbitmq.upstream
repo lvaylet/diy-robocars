@@ -1,0 +1,3 @@
+upstream docker-rabbitmq {
+    server rabbitmq:15672;
+}

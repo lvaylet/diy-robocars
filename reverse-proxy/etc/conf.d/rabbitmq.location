@@ -1,0 +1,12 @@
+location ~* /rabbitmq/api/(.*?)/(.*) {                                                          
+    proxy_pass        http://docker-rabbitmq/api/$1/%2F/$2?$query_string;                          
+    proxy_buffering   off;
+    proxy_set_header  X-Forwarded-Proto  $scheme;
+}     
+
+location ~* /rabbitmq/(.*) {                                                                    
+    rewrite ^/rabbitmq/(.*)$ /$1 break;                                                     
+    proxy_pass        http://docker-rabbitmq;                                                      
+    proxy_buffering   off;
+    proxy_set_header  X-Forwarded-Proto  $scheme;
+}    
