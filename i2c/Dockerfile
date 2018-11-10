@@ -5,12 +5,7 @@ FROM resin/raspberrypi3-python:${PYTHON_VERSION} as builder
 # References:
 # - https://www.merixstudio.com/blog/docker-multi-stage-builds-python-development/
 
-ENV PYTHONUNBUFFERED 1
-
-# Install GCC and Python libraries
-RUN apt-get update && apt-get install -y \
-      build-essential \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /wheels
 
@@ -26,11 +21,11 @@ FROM resin/raspberrypi3-python:${PYTHON_VERSION}-slim
 
 LABEL maintainer="Laurent Vaylet <laurent.vaylet@gmail.com>"
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y \
-      python3-smbus \
-      i2c-tools \
+      python3-smbus=3.1.1+svn-2 \
+      i2c-tools=3.1.1+svn-2 \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # This is where the magic of multi-stage builds kicks in. Contents of /wheels is
