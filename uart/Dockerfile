@@ -1,6 +1,8 @@
 FROM resin/raspberrypi3-node:9
 
-ENV INITSYSTEM on
+LABEL maintainer="Laurent Vaylet <laurent.vaylet@gmail.com>"
+
+ENV INITSYSTEM=on
 
 RUN apt-get update && apt-get install -y \
       minicom \
