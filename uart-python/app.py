@@ -45,6 +45,8 @@ parameters = pika.ConnectionParameters(host='rabbitmq',
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
+channel.queue_declare(queue='pulse_width_microseconds')
+
 
 # With topics:
 # channel.exchange_declare(exchange='topic_rc_receiver_pulse_widths_microseconds',
@@ -74,7 +76,7 @@ def serial_data_to_dict(byte_array: bytes) -> Dict[str, int]:
 
 # endregion
 
-logger.info('Reading data from serial port, press Ctrl-C to quit...')
+logger.info('Reading data from serial port. Press CTRL+C to exit.')
 while True:
     data_byte_array = ser.readline()
     data_dict = serial_data_to_dict(data_byte_array)

@@ -83,3 +83,6 @@ services:
     ports:
       # Enable web forwarding and map our reverse proxy to port 80
       - '80:80'  # HOST:CONTAINER
+
+  driver:
+    build: ./driver
