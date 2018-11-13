@@ -32,6 +32,7 @@ def map_to_range(x: int, from_low: int, from_high: int, to_low: int, to_high: in
     return int((x - from_low) * (to_high - to_low) / (from_high - from_low) + to_low)
 
 
+# FIXME Review page 17 of https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf for a good example of how to compute ticks
 def pulse_width_microseconds_to_ticks(desired_pulse_width_microseconds: int, pwm_freq_hz: int = 50) -> int:
     """
     Convert a PWM pulse width from microseconds to 12-bit ticks (0..4095).
