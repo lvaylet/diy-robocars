@@ -17,17 +17,22 @@ logger = logging.getLogger(__name__)
 # endregion
 
 # region Data broker (RabbitMQ)
+RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'guest')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'guest')
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
+RABBITMQ_PORT = int(os.environ.get('RABBITMQ_PORT', '5672'))
+RABBITMQ_QUEUE = os.environ.get('RABBITMQ_QUEUE', 'steering_and_throttle')
 
-credentials = pika.PlainCredentials(username='guest',
-                                    password='guest')
-parameters = pika.ConnectionParameters(host='rabbitmq',
-                                       port=5672,
+credentials = pika.PlainCredentials(username=RABBITMQ_USERNAME,
+                                    password=RABBITMQ_PASSWORD)
+parameters = pika.ConnectionParameters(host=RABBITMQ_HOST,
+                                       port=RABBITMQ_PORT,
                                        virtual_host='/',
                                        credentials=credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
-channel.queue_declare(queue='pulse_width_microseconds')
+channel.queue_declare(queue=RABBITMQ_QUEUE)
 
 
 def callback(ch, method, properties, body):
@@ -35,7 +40,7 @@ def callback(ch, method, properties, body):
 
 
 channel.basic_consume(callback,
-                      queue='pulse_width_microseconds',
+                      queue=RABBITMQ_QUEUE,
                       no_ack=True)
 
 # With topics:
@@ -45,5 +50,5 @@ channel.basic_consume(callback,
 
 # endregion
 
-logger.info('Consuming steering and throttle orders. Press CTRL+C to exit.')
+logger.info('Consuming normalized steering and throttle orders. Press CTRL+C to exit.')
 channel.start_consuming()
