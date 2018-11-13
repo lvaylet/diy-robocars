@@ -6,6 +6,7 @@ Consume steering and throttle orders and drive motors through PCA9685.
 """
 
 import logging
+import os
 
 import pika
 
