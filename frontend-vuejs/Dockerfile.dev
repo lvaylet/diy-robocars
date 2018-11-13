@@ -1,0 +1,14 @@
+FROM node:10-slim as builder
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+RUN yarn install
+
+COPY . ./
+
+EXPOSE 8080
+
+USER node
+
+CMD [ "yarn", "serve" ]
