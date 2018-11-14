@@ -56,12 +56,12 @@ channel.queue_declare(queue=RABBITMQ_QUEUE)
 
 # endregion
 
-STEERING_CENTER = os.environ.get('STEERING_CENTER', 1500)
-STEERING_MIN = os.environ.get('STEERING_MIN', 1000)
-STEERING_MAX = os.environ.get('STEERING_MAX', 2000)
-THROTTLE_CENTER = os.environ.get('STEERING_CENTER', 1500)
-THROTTLE_MIN = os.environ.get('STEERING_MIN', 1000)
-THROTTLE_MAX = os.environ.get('STEERING_MAX', 2000)
+STEERING_CENTER = int(os.environ.get('STEERING_CENTER', '1500'))
+STEERING_MIN = int(os.environ.get('STEERING_MIN', '1000'))
+STEERING_MAX = int(os.environ.get('STEERING_MAX', '2000'))
+THROTTLE_CENTER = int(os.environ.get('STEERING_CENTER', '1500'))
+THROTTLE_MIN = int(os.environ.get('STEERING_MIN', '1000'))
+THROTTLE_MAX = int(os.environ.get('STEERING_MAX', '2000'))
 
 logger.info('Reading data from serial port. Press CTRL+C to exit.')
 while True:
