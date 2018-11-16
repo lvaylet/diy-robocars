@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from helpers import map_to_range, pulse_width_microseconds_to_ticks, microseconds_to_normalized, normalized_to_microseconds
+from helpers import map_to_range, pulse_width_microseconds_to_ticks, microseconds_to_normalized, \
+    normalized_to_microseconds, serial_data_to_dict
 
 
 class TestMapToRange:
@@ -84,3 +85,9 @@ class TestNormalizeAndDenormalize:
 
     def test_1000_should_normalize_then_denormalize_to_1000(self):
         assert normalized_to_microseconds(microseconds_to_normalized(1000, 1000, 1496, 1984), 1000, 1496, 1984) == 1000
+
+
+class TestSerialDataToDict:
+
+    def test_valid_byte_array_should_return_valid_dict(self):
+        assert serial_data_to_dict(b'CH1:1400\tCH2:1600\n') == {'CH1': 1400, 'CH2': 1600}

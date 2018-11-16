@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -109,3 +111,23 @@ def normalized_to_microseconds(normalized_setpoint: float, low: int, center: int
         return int(normalized_setpoint * (high - center)) + center
     else:
         return int(normalized_setpoint * (center - low)) + center
+
+
+def serial_data_to_dict(byte_array: bytes) -> Dict[str, int]:
+    """
+    Convert a byte array to a dictionary like {'channel name': value}
+
+    :param byte_array: The byte array read from the serial port.
+    :return: The dictionary.
+    :type byte_array: bytes
+    :rtype: dict[str, int]
+    """
+    # Compile a regex that can parse a byte array buffer with an arbitrary number
+    # of records, each consisting of a channel name, a colon and a numeric value.
+    pattern = re.compile(b'(CH\d+):(\d+)')
+    # Parse byte array with regex, as a list of tuples (channel name, value)
+    packed = pattern.findall(byte_array)
+    # Unpack as a list of tuples
+    unpacked = [(x[0].decode(), int(x[1].decode())) for x in packed]
+    # Build a dictionary out of the unpacked list of tuples (key = channel name, value = channel value)
+    return dict(unpacked)
