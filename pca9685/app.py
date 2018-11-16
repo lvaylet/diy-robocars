@@ -25,13 +25,16 @@ logger = logging.getLogger(__name__)
 
 PWM_FREQUENCY_HZ = int(os.environ.get('PWN_FREQUENCY_HZ', '50'))  # 50 Hz is suitable for most servos with 20 ms frames
 
-STEERING_RIGHT_PULSE_LENGTH_MICROSECONDS = int(os.environ.get('STEERING_MIN', '1000'))
-STEERING_LEFT_PULSE_WIDTH_MICROSECONDS = int(os.environ.get('STEERING_MAX', '1984'))
-STEERING_CENTER_PULSE_WIDTH_MICROSECONDS = int(os.environ.get('STEERING_CENTER', '1984'))
+STEERING_MIN = int(os.environ.get('STEERING_MIN', '1000'))
+STEERING_MAX = int(os.environ.get('STEERING_MAX', '1984'))
+STEERING_CENTER = int(os.environ.get('STEERING_CENTER', '1984'))
 
-THROTTLE_RIGHT_PULSE_LENGTH_MICROSECONDS = int(os.environ.get('THROTTLE_MIN', '1000'))
-THROTTLE_LEFT_PULSE_WIDTH_MICROSECONDS = int(os.environ.get('THROTTLE_MAX', '1984'))
-THROTTLE_CENTER_PULSE_WIDTH_MICROSECONDS = int(os.environ.get('THROTTLE_CENTER', '1984'))
+THROTTLE_MIN = int(os.environ.get('THROTTLE_MIN', '1000'))
+THROTTLE_MAX = int(os.environ.get('THROTTLE_MAX', '1984'))
+THROTTLE_CENTER = int(os.environ.get('THROTTLE_CENTER', '1984'))
+
+STEERING_LIMIT = float(os.environ.get('STEERING_LIMIT', '1.0'))
+THROTTLE_LIMIT = float(os.environ.get('THROTTLE_LIMIT', '0.1'))  # limit throttle to 10% by default
 
 STEERING_CHANNEL_ON_PCA9685 = int(os.environ.get('STEERING_CHANNEL_ON_PCA9685', '0'))
 THROTTLE_CHANNEL_ON_PCA9685 = int(os.environ.get('THROTTLE_CHANNEL_ON_PCA9685', '1'))
@@ -60,7 +63,10 @@ pca9685.set_pwm_freq(PWM_FREQUENCY_HZ)
 
 logger.info('Reading data from serial port. Press CTRL+C to exit.')
 while True:
+    # Read serial data
     data_byte_array = ser.readline()
+
+    # Extract steering and throttle setpoints from serial data
     data_dict = helpers.serial_data_to_dict(data_byte_array)
     try:
         steering = data_dict['CH1']
@@ -68,14 +74,48 @@ while True:
     except KeyError as e:
         # `CH1` or `CH2` are not in `data_dict`
         logger.error('Could not find key [%s] in data_dict.', e.args[0])
-        steering = STEERING_CENTER_PULSE_WIDTH_MICROSECONDS
-        throttle = THROTTLE_CENTER_PULSE_WIDTH_MICROSECONDS
+        steering = STEERING_CENTER
+        throttle = THROTTLE_CENTER
 
-    # TODO Noemalize and limit setpoints (especially throttle, to 10% for example)
+    # Normalize steering and throttle setpoints to [-1.0; +1.0]
+    steering_normalized = helpers.microseconds_to_normalized(steering,
+                                                             min_reading=STEERING_MIN,
+                                                             center_reading=STEERING_CENTER,
+                                                             max_reading=STEERING_MAX)
+    throttle_normalized = helpers.microseconds_to_normalized(throttle,
+                                                             min_reading=THROTTLE_MIN,
+                                                             center_reading=STEERING_CENTER,
+                                                             max_reading=STEERING_MAX)
 
+    # Limit steering and throttle normalized setpoints
+    if steering_normalized > STEERING_LIMIT:
+        steering_normalized_limited = STEERING_LIMIT
+    elif steering_normalized < -STEERING_LIMIT:
+        steering_normalized_limited = -STEERING_LIMIT
+    else:
+        steering_normalized_limited = steering_normalized
+
+    if throttle_normalized > THROTTLE_LIMIT:
+        throttle_normalized_limited = THROTTLE_LIMIT
+    elif throttle_normalized < -THROTTLE_LIMIT:
+        throttle_normalized_limited = -THROTTLE_LIMIT
+    else:
+        throttle_normalized_limited = throttle_normalized
+
+    # Convert normalized and limited setpoints back to pulse widths (in microseconds)
+    steering_limited = helpers.normalized_to_microseconds(steering_normalized_limited,
+                                                          low=STEERING_MIN,
+                                                          center=STEERING_CENTER,
+                                                          high=STEERING_MAX)
+    throttle_limited = helpers.normalized_to_microseconds(throttle_normalized_limited,
+                                                          low=THROTTLE_MIN,
+                                                          center=THROTTLE_CENTER,
+                                                          high=THROTTLE_MAX)
+
+    # Apply steering and throttle setpoints
     pca9685.set_pwm(channel=STEERING_CHANNEL_ON_PCA9685,
                     on=0,
-                    off=helpers.pulse_width_microseconds_to_ticks(steering))
+                    off=helpers.pulse_width_microseconds_to_ticks(steering_limited))
     pca9685.set_pwm(channel=THROTTLE_CHANNEL_ON_PCA9685,
                     on=0,
-                    off=helpers.pulse_width_microseconds_to_ticks(throttle))
+                    off=helpers.pulse_width_microseconds_to_ticks(throttle_limited))
