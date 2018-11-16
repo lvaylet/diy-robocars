@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from helpers import map_to_range, pulse_width_microseconds_to_ticks, normalize
+from helpers import map_to_range, pulse_width_microseconds_to_ticks, microseconds_to_normalized, normalized_to_microseconds
 
 
 class TestMapToRange:
@@ -46,11 +46,41 @@ class TestMicrosecondsToTicks:
 
 class TestNormalize:
 
-    def test_1496_steering_should_normalize_to_0(self):
-        assert normalize(1496, 1000, 1496, 1984) == 0.0
+    def test_1496_microseconds_steering_should_normalize_to_0(self):
+        assert microseconds_to_normalized(1496, 1000, 1496, 1984) == 0.0
 
-    def test_1000_steering_should_normalize_to_minus_1(self):
-        assert normalize(1000, 1000, 1496, 1984) == -1.0
+    def test_1000_microseconds_steering_should_normalize_to_minus_1(self):
+        assert microseconds_to_normalized(1000, 1000, 1496, 1984) == -1.0
 
-    def test_1984_steering_should_normalize_to_plus_1(self):
-        assert normalize(1984, 1000, 1496, 1984) == 1.0
+    def test_1984_microseconds_steering_should_normalize_to_plus_1(self):
+        assert microseconds_to_normalized(1984, 1000, 1496, 1984) == +1.0
+
+
+class TestDenormalize:
+
+    def test_0_steering_should_denormalize_to_1496_microseconds(self):
+        assert normalized_to_microseconds(0.0, 1000, 1496, 1984) == 1496
+
+    def test_plus_1_steering_should_denormalize_to_1984_microseconds(self):
+        assert normalized_to_microseconds(+1.0, 1000, 1496, 1984) == 1984
+
+    def test_minus_1_steering_should_denormalize_to_1000_microseconds(self):
+        assert normalized_to_microseconds(-1.0, 1000, 1496, 1984) == 1000
+
+    def test_out_of_range_setpoints_should_denormalize_to_1496_microseconds(self):
+        assert normalized_to_microseconds(-1.2, 1000, 1496, 1984) == 1496
+        assert normalized_to_microseconds(-5.8, 1000, 1496, 1984) == 1496
+        assert normalized_to_microseconds(+1.2, 1000, 1496, 1984) == 1496
+        assert normalized_to_microseconds(+5.8, 1000, 1496, 1984) == 1496
+
+
+class TestNormalizeAndDenormalize:
+
+    def test_1496_should_normalize_then_denormalize_to_1496(self):
+        assert normalized_to_microseconds(microseconds_to_normalized(1496, 1000, 1496, 1984), 1000, 1496, 1984) == 1496
+
+    def test_1984_should_normalize_then_denormalize_to_1984(self):
+        assert normalized_to_microseconds(microseconds_to_normalized(1984, 1000, 1496, 1984), 1000, 1496, 1984) == 1984
+
+    def test_1000_should_normalize_then_denormalize_to_1000(self):
+        assert normalized_to_microseconds(microseconds_to_normalized(1000, 1000, 1496, 1984), 1000, 1496, 1984) == 1000

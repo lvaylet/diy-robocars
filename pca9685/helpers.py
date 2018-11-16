@@ -59,13 +59,13 @@ def pulse_width_microseconds_to_ticks(desired_pulse_width_microseconds: int, pwm
     return pulse_width_ticks
 
 
-def normalize(reading: int, min_reading: int, center_reading: int, max_reading: int) -> float:
+def microseconds_to_normalized(reading: int, min_reading: int, center_reading: int, max_reading: int) -> float:
     """
-    Normalizes a reading between -1.0 and 1.0.
+    Converts a pulse width (in microseconds) to a normalized setpoint (between -1.0 and 1.0).
 
     Positive and negative values are computed separately, as they can span different intervals initially.
 
-    :param reading: The reading to normalize.
+    :param reading: The pulse width to convert.
     :param min_reading: The minimum reading, mapped to -1.0.
     :param center_reading: The center reading, at rest, mapped to 0.0.
     :param max_reading: The maximum reading, mapped to 1.0.
@@ -83,3 +83,29 @@ def normalize(reading: int, min_reading: int, center_reading: int, max_reading: 
         normalized_reading = centered_reading / (center_reading - min_reading)
 
     return normalized_reading
+
+
+def normalized_to_microseconds(normalized_setpoint: float, low: int, center: int, high: int) -> int:
+    """
+    Converts a normalized setpoint (between -1.0 and 1.0) to a pulse width (in microseconds).
+
+    Positive and negative values are computed separately, as they can span different intervals in terms of pulse widths.
+
+    :param normalized_setpoint: The normalized setpoint to convert, between -1.0 and 1.0.
+    :param low: The minimum pulse width, in microseconds.
+    :param center: The center pulse width, in microseconds.
+    :param high: The maximum pulse width, in microseconds.
+    :return: The pulse width, in microseconds.
+    :type normalized_setpoint: float
+    :type low: int
+    :type center: int
+    :type high: int
+    :rtype: int
+    """
+    if abs(normalized_setpoint) > 1.0:
+        return center
+
+    if normalized_setpoint > 0.0:
+        return int(normalized_setpoint * (high - center)) + center
+    else:
+        return int(normalized_setpoint * (center - low)) + center
