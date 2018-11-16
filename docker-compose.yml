@@ -2,47 +2,47 @@ version: '2'
 
 services:
 
-  frontend:
-    build: ./frontend
-    expose:
-      - '80'
+  # frontend:
+  #   build: ./frontend
+  #   expose:
+  #     - '80'
 
-  data:
-    build: ./data
-    expose:
-      - '8080'
+  # data:
+  #   build: ./data
+  #   expose:
+  #     - '8080'
 
-  proxy:
-    build: ./haproxy
-    # Reallocate port 80 to reverse-proxy (below)
-    # ports:
-    #   # Enable web forwarding and map our reverse proxy to port 80
-    #   - '80:80'  # HOST:CONTAINER
-    depends_on:
-      - frontend
-      - data
-      - node-exporter
+  # proxy:
+  #   build: ./haproxy
+  #   # Reallocate port 80 to reverse-proxy (below)
+  #   # ports:
+  #   #   # Enable web forwarding and map our reverse proxy to port 80
+  #   #   - '80:80'  # HOST:CONTAINER
+  #   depends_on:
+  #     - frontend
+  #     - data
+  #     - node-exporter
 
-  node-exporter:
-    image: rycus86/prometheus-node-exporter:0.15.2-armhf
-    expose:
-      - '9100'
-    command:
-      # Disable some collectors to save up on bandwidth usage
-      # The default collectors send 100 KB of data
-      # Reference: https://github.com/prometheus/node_exporter
-      - '--no-collector.diskstats'  # saves 9 KB => 91 KB payload
-      - '--no-collector.netstat'    # saves 45 KB => 46 KB payload
-      - '--no-collector.vmstat'     # saves 14 KB => 32 KB payload
+  # node-exporter:
+  #   image: rycus86/prometheus-node-exporter:0.15.2-armhf
+  #   expose:
+  #     - '9100'
+  #   command:
+  #     # Disable some collectors to save up on bandwidth usage
+  #     # The default collectors send 100 KB of data
+  #     # Reference: https://github.com/prometheus/node_exporter
+  #     - '--no-collector.diskstats'  # saves 9 KB => 91 KB payload
+  #     - '--no-collector.netstat'    # saves 45 KB => 46 KB payload
+  #     - '--no-collector.vmstat'     # saves 14 KB => 32 KB payload
 
-  timelapse:
-    build: ./timelapse
-    # Allow direct access to hardware resources
-    privileged: true
-    labels:
-      # Bind mount the host OS /lib/modules into the container
-      # (i.e. /lib/modules:/lib/modules)
-      io.resin.features.kernel-modules: '1'
+  # timelapse:
+  #   build: ./timelapse
+  #   # Allow direct access to hardware resources
+  #   privileged: true
+  #   labels:
+  #     # Bind mount the host OS /lib/modules into the container
+  #     # (i.e. /lib/modules:/lib/modules)
+  #     io.resin.features.kernel-modules: '1'
 
   pca9685:
     build: ./pca9685
@@ -62,27 +62,27 @@ services:
       # (i.e. /lib/modules:/lib/modules)
       io.resin.features.kernel-modules: '1'
 
-  uart:
-    build: ./uart-python
-    privileged: true
+  # uart:
+  #   build: ./uart-python
+  #   privileged: true
 
-  rabbitmq:
-    image: arm32v7/rabbitmq:3.7-management
-    hostname: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: 'guest'
-      RABBITMQ_DEFAULT_PASS: 'guest'
-      RABBITMQ_ERLANG_COOKIE: 'SWQOKODSQALRPCLNMEQG'
-      RABBITMQ_DEFAULT_VHOST: '/'
-    expose:
-      - '15672'  # management UI
-      - '5672'   # default listening port
+  # rabbitmq:
+  #   image: arm32v7/rabbitmq:3.7-management
+  #   hostname: rabbitmq
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: 'guest'
+  #     RABBITMQ_DEFAULT_PASS: 'guest'
+  #     RABBITMQ_ERLANG_COOKIE: 'SWQOKODSQALRPCLNMEQG'
+  #     RABBITMQ_DEFAULT_VHOST: '/'
+  #   expose:
+  #     - '15672'  # management UI
+  #     - '5672'   # default listening port
 
-  reverse-proxy:
-    build: ./reverse-proxy
-    ports:
-      # Enable web forwarding and map our reverse proxy to port 80
-      - '80:80'  # HOST:CONTAINER
+  # reverse-proxy:
+  #   build: ./reverse-proxy
+  #   ports:
+  #     # Enable web forwarding and map our reverse proxy to port 80
+  #     - '80:80'  # HOST:CONTAINER
 
-  driver:
-    build: ./driver
+  # driver:
+  #   build: ./driver
