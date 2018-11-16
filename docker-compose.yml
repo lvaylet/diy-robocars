@@ -44,8 +44,8 @@ services:
       # (i.e. /lib/modules:/lib/modules)
       io.resin.features.kernel-modules: '1'
 
-  i2c:
-    build: ./i2c
+  pca9685:
+    build: ./pca9685
     # Unlike single container applications, multicontainer applications
     # do not run containers in privileged mode by default. If you want
     # to make use of hardware, you will either have to set some services
@@ -77,7 +77,7 @@ services:
     expose:
       - '15672'  # management UI
       - '5672'   # default listening port
-  
+
   reverse-proxy:
     build: ./reverse-proxy
     ports:
