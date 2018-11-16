@@ -71,6 +71,8 @@ while True:
         steering = STEERING_CENTER_PULSE_WIDTH_MICROSECONDS
         throttle = THROTTLE_CENTER_PULSE_WIDTH_MICROSECONDS
 
+    # TODO Noemalize and limit setpoints (especially throttle, to 10% for example)
+
     pca9685.set_pwm(channel=STEERING_CHANNEL_ON_PCA9685,
                     on=0,
                     off=helpers.pulse_width_microseconds_to_ticks(steering))
