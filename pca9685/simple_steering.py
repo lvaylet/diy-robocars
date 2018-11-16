@@ -15,7 +15,7 @@ from helpers import pulse_width_microseconds_to_ticks
 
 # region Logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # endregion
@@ -60,4 +60,10 @@ while True:
     pca9685.set_pwm(channel=STEERING_CHANNEL_ON_PCA9685,
                     on=0,
                     off=pulse_width_microseconds_to_ticks(STEERING_RIGHT_PULSE_LENGTH_MICROSECONDS))
+    time.sleep(1)
+
+    logger.info('Going straight ahead...')
+    pca9685.set_pwm(channel=STEERING_CHANNEL_ON_PCA9685,
+                    on=0,
+                    off=pulse_width_microseconds_to_ticks(STEERING_CENTER_PULSE_WIDTH_MICROSECONDS))
     time.sleep(1)
