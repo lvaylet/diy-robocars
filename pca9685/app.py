@@ -16,7 +16,8 @@ import helpers
 
 # region Logging
 
-logging.basicConfig(level=logging.INFO)
+logging_level = logging.DEBUG if 'DEBUG' in os.environ else logging.INFO
+logging.basicConfig(level=logging_level)
 logger = logging.getLogger(__name__)
 
 # endregion
@@ -77,6 +78,8 @@ while True:
         steering = STEERING_CENTER
         throttle = THROTTLE_CENTER
 
+    logger.debug('Steering = %d, Throttle = %d', steering, throttle)
+
     # Normalize steering and throttle setpoints to [-1.0; +1.0]
     steering_normalized = helpers.microseconds_to_normalized(steering,
                                                              min_reading=STEERING_MIN,
@@ -86,6 +89,8 @@ while True:
                                                              min_reading=THROTTLE_MIN,
                                                              center_reading=STEERING_CENTER,
                                                              max_reading=STEERING_MAX)
+
+    logger.debug('Steering normalized = %d, Throttle normalized = %d', steering_normalized, throttle_normalized)
 
     # Limit steering and throttle normalized setpoints
     if steering_normalized > STEERING_LIMIT:
@@ -102,6 +107,10 @@ while True:
     else:
         throttle_normalized_limited = throttle_normalized
 
+    logger.debug('Steering normalized limited = %d, Throttle normalized limited = %d',
+                 steering_normalized_limited,
+                 throttle_normalized_limited)
+
     # Convert normalized and limited setpoints back to pulse widths (in microseconds)
     steering_limited = helpers.normalized_to_microseconds(steering_normalized_limited,
                                                           low=STEERING_MIN,
@@ -111,6 +120,8 @@ while True:
                                                           low=THROTTLE_MIN,
                                                           center=THROTTLE_CENTER,
                                                           high=THROTTLE_MAX)
+
+    logger.debug('Steering limited = %d, Throttle limited = %d', steering_limited, throttle_limited)
 
     # Apply steering and throttle setpoints
     pca9685.set_pwm(channel=STEERING_CHANNEL_ON_PCA9685,
