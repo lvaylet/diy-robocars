@@ -3,12 +3,12 @@ version: '2'
 services:
 
   ros-master:
-    build: ./ros
+    image: ros:melodic-ros-base
     command:
       - roscore
 
   ros-talker:
-    build: ./ros
+    build: ./ros-tutorials
     environment:
       - ROS_HOSTNAME=ros-talker
       - ROS_MASTER_URI=http://ros-master:11311
@@ -16,7 +16,7 @@ services:
     command: rosrun roscpp_tutorials talker
 
   ros-listener:
-    build: ./ros
+    build: ./ros-tutorials
     environment:
       - ROS_HOSTNAME=ros-listener
       - ROS_MASTER_URI=http://ros-master:11311
@@ -24,7 +24,7 @@ services:
     command: rosrun roscpp_tutorials listener
 
   ros-joy:
-    build: ./ros
+    build: ./ros-joy
     # Unlike single container applications, multicontainer applications
     # do not run containers in privileged mode by default. If you want
     # to make use of hardware, you will either have to set some services
