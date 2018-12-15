@@ -2,88 +2,41 @@ version: '2'
 
 services:
 
-  # frontend:
-  #   build: ./frontend
-  #   expose:
-  #     - '80'
+  ros-master:
+    build: ./ros
+    command:
+      - roscore
 
-  # data:
-  #   build: ./data
-  #   expose:
-  #     - '8080'
+  ros-talker:
+    build: ./ros
+    environment:
+      - ROS_HOSTNAME=ros-talker
+      - ROS_MASTER_URI=http://ros-master:11311
+    # rosrun <package> <executable>
+    command: rosrun roscpp_tutorials talker
 
-  # proxy:
-  #   build: ./haproxy
-  #   # Reallocate port 80 to reverse-proxy (below)
-  #   # ports:
-  #   #   # Enable web forwarding and map our reverse proxy to port 80
-  #   #   - '80:80'  # HOST:CONTAINER
-  #   depends_on:
-  #     - frontend
-  #     - data
-  #     - node-exporter
+  ros-listener:
+    build: ./ros
+    environment:
+      - ROS_HOSTNAME=ros-listener
+      - ROS_MASTER_URI=http://ros-master:11311
+    # rosrun <package> <executable>
+    command: rosrun roscpp_tutorials listener
 
-  # node-exporter:
-  #   image: rycus86/prometheus-node-exporter:0.15.2-armhf
-  #   expose:
-  #     - '9100'
-  #   command:
-  #     # Disable some collectors to save up on bandwidth usage
-  #     # The default collectors send 100 KB of data
-  #     # Reference: https://github.com/prometheus/node_exporter
-  #     - '--no-collector.diskstats'  # saves 9 KB => 91 KB payload
-  #     - '--no-collector.netstat'    # saves 45 KB => 46 KB payload
-  #     - '--no-collector.vmstat'     # saves 14 KB => 32 KB payload
-
-  # timelapse:
-  #   build: ./timelapse
-  #   # Allow direct access to hardware resources
-  #   privileged: true
-  #   labels:
-  #     # Bind mount the host OS /lib/modules into the container
-  #     # (i.e. /lib/modules:/lib/modules)
-  #     io.resin.features.kernel-modules: '1'
-
-  pca9685:
-    build: ./pca9685
+  ros-joy:
+    build: ./ros
     # Unlike single container applications, multicontainer applications
     # do not run containers in privileged mode by default. If you want
     # to make use of hardware, you will either have to set some services
     # to privileged, using `privileged: true`, or use the `cap_add` and
     # `devices` settings to map in the correct hardware access to the
     # container.
-    devices:
-      - '/dev/i2c-1:/dev/i2c-1'
-      - '/dev/mem:/dev/mem'
-      - '/dev/ttyACM0:/dev/ttyACM0'
-    cap_add:
-      - SYS_RAWIO
-    labels:
-      # Bind mount the host OS /lib/modules into the container
-      # (i.e. /lib/modules:/lib/modules)
-      io.resin.features.kernel-modules: '1'
-
-  # uart:
-  #   build: ./uart-python
-  #   privileged: true
-
-  # rabbitmq:
-  #   image: arm32v7/rabbitmq:3.7-management
-  #   hostname: rabbitmq
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: 'guest'
-  #     RABBITMQ_DEFAULT_PASS: 'guest'
-  #     RABBITMQ_ERLANG_COOKIE: 'SWQOKODSQALRPCLNMEQG'
-  #     RABBITMQ_DEFAULT_VHOST: '/'
-  #   expose:
-  #     - '15672'  # management UI
-  #     - '5672'   # default listening port
-
-  # reverse-proxy:
-  #   build: ./reverse-proxy
-  #   ports:
-  #     # Enable web forwarding and map our reverse proxy to port 80
-  #     - '80:80'  # HOST:CONTAINER
-
-  # driver:
-  #   build: ./driver
+    privileged: true
+    # devices:
+    #   - '/dev/input/js0:/dev/input/js0'
+    # cap_add:
+    #   - SYS_RAWIO
+    environment:
+      - ROS_HOSTNAME=ros-joy
+      - ROS_MASTER_URI=http://ros-master:11311
+    command: rosparam set joy_node/dev "/dev/input/js0" && rosrun joy joy_node
