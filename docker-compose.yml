@@ -7,27 +7,6 @@ services:
     command:
       - roscore
 
-  ros-talker:
-    build: ./ros-tutorials
-    depends_on:
-      - ros-master
-    environment:
-      - ROS_HOSTNAME=ros-talker
-      - ROS_MASTER_URI=http://ros-master:11311
-    # rosrun <package> <executable>
-    command: rosrun roscpp_tutorials talker
-
-  ros-listener:
-    build: ./ros-tutorials
-    depends_on:
-      - ros-master
-      - ros-talker
-    environment:
-      - ROS_HOSTNAME=ros-listener
-      - ROS_MASTER_URI=http://ros-master:11311
-    # rosrun <package> <executable>
-    command: rosrun roscpp_tutorials listener
-
   # http://wiki.ros.org/joy/Tutorials/ConfiguringALinuxJoystick
   ros-joy:
     build: ./ros-joy
