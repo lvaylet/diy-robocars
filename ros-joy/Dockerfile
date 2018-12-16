@@ -10,4 +10,4 @@ WORKDIR /usr/src/app
 COPY . ./
 
 # Start application
-CMD [ "bash", "start.sh" ]
+CMD bash start.sh
