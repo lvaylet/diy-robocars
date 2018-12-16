@@ -47,4 +47,5 @@ services:
     environment:
       - ROS_HOSTNAME=ros-joy
       - ROS_MASTER_URI=http://ros-master:11311
-    command: rosparam set joy_node/dev "/dev/input/js0" && rosrun joy joy_node
+    # command: rosparam set joy_node/dev "/dev/input/js0" && rosrun joy joy_node
+    command: while true; do echo 'Entering infinite loop...'; sleep 1; done
