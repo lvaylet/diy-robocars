@@ -21,6 +21,7 @@ services:
     build: ./ros-tutorials
     depends_on:
       - ros-master
+      - ros-talker
     environment:
       - ROS_HOSTNAME=ros-listener
       - ROS_MASTER_URI=http://ros-master:11311
