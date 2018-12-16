@@ -3,7 +3,7 @@ version: '2'
 services:
 
   ros-master:
-    image: ros:melodic-ros-base
+    image: arm32v7/ros:melodic-ros-base
     command:
       - roscore
 
