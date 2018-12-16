@@ -23,6 +23,7 @@ services:
     # rosrun <package> <executable>
     command: rosrun roscpp_tutorials listener
 
+  # http://wiki.ros.org/joy/Tutorials/ConfiguringALinuxJoystick
   ros-joy:
     build: ./ros-joy
     # Unlike single container applications, multicontainer applications
