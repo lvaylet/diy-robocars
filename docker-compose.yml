@@ -9,6 +9,8 @@ services:
 
   ros-talker:
     build: ./ros-tutorials
+    depends_on:
+      - ros-master
     environment:
       - ROS_HOSTNAME=ros-talker
       - ROS_MASTER_URI=http://ros-master:11311
@@ -17,6 +19,8 @@ services:
 
   ros-listener:
     build: ./ros-tutorials
+    depends_on:
+      - ros-master
     environment:
       - ROS_HOSTNAME=ros-listener
       - ROS_MASTER_URI=http://ros-master:11311
@@ -26,6 +30,8 @@ services:
   # http://wiki.ros.org/joy/Tutorials/ConfiguringALinuxJoystick
   ros-joy:
     build: ./ros-joy
+    depends_on:
+      - ros-master
     # Unlike single container applications, multicontainer applications
     # do not run containers in privileged mode by default. If you want
     # to make use of hardware, you will either have to set some services
