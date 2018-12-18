@@ -1,0 +1,56 @@
+version: '2'
+
+services:
+
+  ros-master:
+    build:
+      context: ./ros-master
+      args:
+        - ROS_ARCHITECTURE=amd64
+    command:
+      - roscore
+
+  # http://wiki.ros.org/joy/Tutorials/ConfiguringALinuxJoystick
+  ros-joy:
+    build:
+      context: ./ros-joy
+      args:
+        - ROS_ARCHITECTURE=amd64
+    depends_on:
+      - ros-master
+    # Unlike single container applications, multicontainer applications
+    # do not run containers in privileged mode by default. If you want
+    # to make use of hardware, you will either have to set some services
+    # to privileged, using `privileged: true`, or use the `cap_add` and
+    # `devices` settings to map in the correct hardware access to the
+    # container.
+    privileged: true
+    # devices:
+    #   - '/dev/input/js0:/dev/input/js0'
+    # cap_add:
+    #   - SYS_RAWIO
+    environment:
+      - ROS_HOSTNAME=ros-joy
+      - ROS_MASTER_URI=http://ros-master:11311
+
+  ros-pca9685:
+    build:
+      context: ./ros-pca9685
+      args:
+        - ROS_ARCHITECTURE=amd64
+    depends_on:
+      - ros-master
+    # Unlike single container applications, multicontainer applications
+    # do not run containers in privileged mode by default. If you want
+    # to make use of hardware, you will either have to set some services
+    # to privileged, using `privileged: true`, or use the `cap_add` and
+    # `devices` settings to map in the correct hardware access to the
+    # container.
+    privileged: true
+    # devices:
+    #   - '/dev/input/js0:/dev/input/js0'
+    # cap_add:
+    #   - SYS_RAWIO
+    environment:
+      - ROS_HOSTNAME=ros-pca9685
+      - ROS_MASTER_URI=http://ros-master:11311
