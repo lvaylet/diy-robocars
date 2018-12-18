@@ -1,0 +1,4 @@
+MultiPinDutyCycle requested
+---
+bool success # True if the call succeeded
+string error # Gives details about failure
