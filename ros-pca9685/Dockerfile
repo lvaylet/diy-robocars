@@ -30,3 +30,5 @@ RUN cd /usr/catkin_ws \
 # Note: why not `source install/setup.bash?`
 RUN catkin_make install \
  && source devel/setup.bash
+
+CMD [ "rosrun", "pca9685", "pca9685_node" ]
