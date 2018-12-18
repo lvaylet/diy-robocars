@@ -3,6 +3,13 @@ ARG ROS_ARCHITECTURE=arm32v7
 
 FROM ${ROS_ARCHITECTURE}/ros:${ROS_DISTRO_VERSION}-ros-base
 
+# Test with:
+# $ docker run -it --rm ros:melodic-ros-base bash
+# root@217f8db31d8a:/#
+#
+# Build with:
+# $ docker build -t ros-pca9685 .
+
 # Setup ROS environment
 # RUN source "/opt/ros/$ROS_DISTRO/setup.bash"
 
