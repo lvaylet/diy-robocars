@@ -14,11 +14,12 @@ RUN mkdir -p /usr/catkin_ws/src \
 # Clone ros-pwm-msgs and ros-pca9685 packages locally in src/
 RUN cd src \
  && git clone https://github.com/cocasema/ros-pwm-msgs \
- && git clone --recurse-submodules https://github.com/cocasema/ros-pca9685
+ && git clone https://github.com/cocasema/ros-pca9685
 
-# Edit ros-pca9685/.gitmodules and change git@github.com:cocasema/simple_io.git to https://github.com/cocasema/simple_io.git
-
+# Clone submodules in ros-pca9685
+# Edit ros-pca9685/.gitmodules and change git@github.com:cocasema/simple_io.git to https://github.com/cocasema/simple_io.git, so the next command does not require SSH
 RUN cd ros-pca9685 \
+ && sed -i -e 's/git@github.com:cocasema\/simple_io.git/https:\/\/github.com\/cocasema\/simple_io.git/g' .gitmodules \
  && git submodule update --init
 
 # Build package
