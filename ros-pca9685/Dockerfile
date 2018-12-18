@@ -27,4 +27,6 @@ RUN cd /usr/catkin_ws \
  && catkin_make
 
 # Install package
-RUN catkin_make install
+# Note: why not `source install/setup.bash?`
+RUN catkin_make install \
+ && source devel/setup.bash
