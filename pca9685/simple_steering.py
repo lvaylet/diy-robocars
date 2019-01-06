@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 PWM_FREQUENCY_HZ = int(os.environ.get('PWN_FREQUENCY_HZ', '50'))  # 50 Hz is suitable for most servos with 20 ms frames
 STEERING_RIGHT_PULSE_LENGTH_MICROSECONDS = int(os.environ.get('STEERING_MIN', '1000'))
 STEERING_LEFT_PULSE_WIDTH_MICROSECONDS = int(os.environ.get('STEERING_MAX', '1984'))
-STEERING_CENTER_PULSE_WIDTH_MICROSECONDS = int(os.environ.get('STEERING_CENTER', '1984'))
+STEERING_CENTER_PULSE_WIDTH_MICROSECONDS = int(os.environ.get('STEERING_CENTER', '1496'))
 
 STEERING_CHANNEL_ON_PCA9685 = int(os.environ.get('STEERING_CHANNEL_ON_PCA9685', '0'))
 THROTTLE_CHANNEL_ON_PCA9685 = int(os.environ.get('THROTTLE_CHANNEL_ON_PCA9685', '1'))
